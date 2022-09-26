@@ -9,6 +9,11 @@ import { CatRequestDto } from './dto/cats.request.dto';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
+    const cat = await await this.catModel.findById(catId).select('-password'); //password필드를 제외하고 가져오기
+    return cat;
+  }
+
   async findCatByEmail(email: string): Promise<Cat> {
     const result = await this.catModel.findOne({ email });
     return result;
