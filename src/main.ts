@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 
@@ -12,6 +13,21 @@ async function bootstrap() {
 
   //class-validation을 사용할려면 app에서 use를 해줘야한다.
   app.useGlobalPipes(new ValidationPipe());
+
+  // swagger를 적용할려면 아래와 같이
+  const config = new DocumentBuilder()
+    .setTitle('Cats')
+    .setDescription('Cat Service')
+    .setVersion('1.0.0')
+    .build();
+  const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+  // swagger적용 완료
+
+  // CORS관련 오류 해결
+  // origin을 true로 하면 어떤 도메인에서도 접속이 된다 -> 추후 배포시에는 실제 url작성
+  app.enableCors({ origin: true, credentials: true });
+
   await app.listen(PORT);
 }
 bootstrap();
