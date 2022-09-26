@@ -10,11 +10,13 @@ import {
   Param,
   ParseIntPipe,
   UseInterceptors,
+  Body,
 } from '@nestjs/common';
 import { PositiveIntPipe } from 'common/pipes/positiveInt.pipe';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { CatsService } from './cats.service';
+import { CatRequestDto } from './dto/cats.request.dto';
 
 @Controller('cats')
 @UseFilters(HttpExceptionFilter)
@@ -26,36 +28,28 @@ export class CatsController {
   constructor(private readonly catsService: CatsService) {}
 
   @Get()
-  getAllCat() {
-    console.log('hello Cats');
-    return { cats: 'Get All Cats' };
+  getCurrentCat() {
+    return 'current cat';
   }
 
-  @Get(':id')
-  //@Param안의 piepes에는 여러개의 pipe를 넣을 수 있다
-  getOneCat(@Param('id', ParseIntPipe, PositiveIntPipe) param) {
-    //@Param을 이용해 param을 바로 가져올 수 있다
-    //2번째 인자로 변환 pipe를 넣어 타입변환 및 유효성 검사를 할 수 있다
-    return 'one cat';
-  }
-
+  //DTO(Data Transfer Object)를 이용하여 입력된 값에 대한 validation을 진행
   @Post()
-  createCat() {
-    return 'create cat';
+  async singup(@Body() body: CatRequestDto) {
+    return await this.catsService.signup(body);
   }
 
-  @Put(':id')
-  updateCat() {
-    return 'update cat';
+  @Post('login')
+  login() {
+    return 'login';
   }
 
-  @Patch(':id')
-  updatePartialCat() {
-    return;
+  @Post('logout')
+  logout() {
+    return 'logout';
   }
 
-  @Delete(':id')
-  deleteCat() {
-    return;
+  @Post('upload/cats')
+  uploadCatImg() {
+    return 'uploadImg';
   }
 }
