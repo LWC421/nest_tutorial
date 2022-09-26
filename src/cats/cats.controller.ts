@@ -2,17 +2,10 @@ import {
   Controller,
   Get,
   Post,
-  Put,
-  Patch,
-  Delete,
-  HttpException,
   UseFilters,
-  Param,
-  ParseIntPipe,
   UseInterceptors,
   Body,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
@@ -23,7 +16,6 @@ import { ReadOnlyCatDto } from './dto/cat.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { LoginRequestDto } from 'src/auth/dto/login.requestDto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
-import { Request } from 'express';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 
 @Controller('cats')

@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
+import * as expressBasicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 
@@ -13,6 +14,15 @@ async function bootstrap() {
 
   //class-validation을 사용할려면 app에서 use를 해줘야한다.
   app.useGlobalPipes(new ValidationPipe());
+
+  //Express에서 비밀번호를 걸기위해 사용
+  app.use(
+    ['/docs', '/docs-json'],
+    expressBasicAuth({
+      challenge: true,
+      users: { [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD },
+    }),
+  );
 
   // swagger를 적용할려면 아래와 같이
   const config = new DocumentBuilder()
