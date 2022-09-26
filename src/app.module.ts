@@ -5,19 +5,15 @@ import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import * as mongoose from 'mongoose';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URI),
-    // MongooseModule.forRoot('mongodb://localhost:27017', {
-    //   useNewUrlParser: true,
-    //   useUnifiedTopology: true,
-    //   useCreateIndex: true,
-    //   useFindAndModify: false,
-    // }),
     CatsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

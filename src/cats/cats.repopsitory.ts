@@ -9,6 +9,11 @@ import { CatRequestDto } from './dto/cats.request.dto';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findCatByEmail(email: string): Promise<Cat> {
+    const result = await this.catModel.findOne({ email });
+    return result;
+  }
+
   async existsByEmail(email: string): Promise<boolean> {
     const result = await this.catModel.exists({ email });
     return result ? true : false;
