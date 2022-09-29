@@ -24,7 +24,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { LoginRequestDto } from 'src/auth/dto/login.requestDto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
-import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/common/utils/multer.options';
 import { Cat } from '../cats.schema';
 
@@ -73,6 +73,7 @@ export class CatsController {
   }
 
   @ApiOperation({ summary: '이미지 업로드' })
+  @ApiBearerAuth()
   @UseInterceptors(FilesInterceptor('image', 10, multerOptions('cats')))
   @ApiConsumes('multipart/form-data')
   @ApiBody({

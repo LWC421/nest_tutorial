@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
+import { Comments, CommentsSchema } from 'src/comments/comments.schema';
 import { Cat } from './cats.schema';
 import { CatRequestDto } from './dto/cats.request.dto';
 
@@ -9,7 +10,9 @@ import { CatRequestDto } from './dto/cats.request.dto';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
-  async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
+  async findCatByIdWithoutPassword(
+    catId: string | Types.ObjectId,
+  ): Promise<Cat | null> {
     const cat = await await this.catModel.findById(catId).select('-password'); //password필드를 제외하고 가져오기
     return cat;
   }
@@ -39,7 +42,12 @@ export class CatsRepository {
 
   //모든 데이터를 가져온다.
   async findAll() {
+    const CommentsModel = mongoose.model(Comments.name, CommentsSchema);
+    const result = await this.catModel
+      .find()
+      .populate('commentsList', CommentsModel);
     //find안에 query문을 쓰지않으면 모든 데이터를 가져온다
-    return await this.catModel.find();
+    //populate를 사용하면 다른 document와 이어주어서 데이터를 가져온다
+    return result;
   }
 }
