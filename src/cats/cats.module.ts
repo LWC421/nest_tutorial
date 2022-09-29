@@ -5,6 +5,7 @@ import { Cat, CatSchema } from './cats.schema';
 import { CatsService } from './cats.service';
 import { CatsRepository } from './cats.repopsitory';
 import { AuthModule } from 'src/auth/auth.module';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   //DB연결할때 imports에서 모델을 넣어준다.
@@ -12,6 +13,10 @@ import { AuthModule } from 'src/auth/auth.module';
     MongooseModule.forFeature([{ name: Cat.name, schema: CatSchema }]),
     //현재 cats와 auth양쪽에서 서로의 module을 사용하므로 순환참조모듈이 발생 -> forwardRef로 해결
     forwardRef(() => AuthModule),
+    //Multer모듈을 import한다, dest가 저장이 될 장소
+    MulterModule.register({
+      dest: './upload',
+    }),
   ],
   controllers: [CatsController],
   providers: [CatsService, CatsRepository],

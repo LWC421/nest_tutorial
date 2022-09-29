@@ -6,10 +6,11 @@ import {
   UseInterceptors,
   Body,
   UseGuards,
+  UploadedFiles,
 } from '@nestjs/common';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CatsService } from './cats.service';
 import { CatRequestDto } from './dto/cats.request.dto';
 import { ReadOnlyCatDto } from './dto/cat.dto';
@@ -17,6 +18,8 @@ import { AuthService } from 'src/auth/auth.service';
 import { LoginRequestDto } from 'src/auth/dto/login.requestDto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/common/utils/multer.options';
 
 @Controller('cats')
 @UseFilters(HttpExceptionFilter)
@@ -31,6 +34,7 @@ export class CatsController {
   ) {}
 
   @ApiOperation({ summary: '현재 고양이 가져오기' })
+  @ApiBearerAuth() //Token이 필요하면 ApuBearerAuth로 표시
   @UseGuards(JwtAuthGuard)
   @Get()
   getCurrentCat(@CurrentUser() cat) {
@@ -62,8 +66,10 @@ export class CatsController {
   }
 
   @ApiOperation({ summary: '이미지 업로드' })
-  @Post('upload/cats')
-  uploadCatImg() {
+  @Post('upload')
+  @UseInterceptors(FilesInterceptor('iamge', 10, multerOptions('cats')))
+  uploadCatImg(@UploadedFiles() files: Array<Express.Multer.File>) {
+    console.log(files);
     return 'uploadImg';
   }
 }
