@@ -5,10 +5,11 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CatRequestDto } from './dto/cats.request.dto';
-import { Cat } from './cats.schema';
+import { CatRequestDto } from '../dto/cats.request.dto';
+import { Cat } from '../cats.schema';
 import * as bcrypt from 'bcrypt';
-import { CatsRepository } from './cats.repopsitory';
+import { CatsRepository } from '../cats.repository';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 @Injectable()
 export class CatsService {
@@ -42,5 +43,21 @@ export class CatsService {
 
     //schema에서 사용자가 임의로 만든 부분을 사용할 수 있음
     return cat.readOnlyData;
+  }
+
+  async uploadImg(cat: Cat, files: Express.Multer.File[]) {
+    const fileName = `cats/${files[0].filename}`;
+    const newCat = await this.catsRepository.fildByIdAndUpdateImg(
+      cat.id,
+      fileName,
+    );
+
+    return newCat;
+  }
+
+  async getAllCat() {
+    const allCat = await this.catsRepository.findAll();
+    const readOnlyCats = allCat.map((cat: Cat) => cat.readOnlyData);
+    return readOnlyCats;
   }
 }

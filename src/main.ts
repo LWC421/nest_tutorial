@@ -4,9 +4,12 @@ import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
 import * as expressBasicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
+// import * as express from 'express';
+import * as path from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const PORT = process.env.PORT;
 
   //App전반적으로 Exception을 적용하려면 app.useGlobalFilters를 사용
@@ -37,6 +40,12 @@ async function bootstrap() {
   // CORS관련 오류 해결
   // origin을 true로 하면 어떤 도메인에서도 접속이 된다 -> 추후 배포시에는 실제 url작성
   app.enableCors({ origin: true, credentials: true });
+
+  //Static파일 제공
+  //prefix가 front에서 접근할 url ex) http://localhost:8000/media/image.png
+  app.useStaticAssets(path.join(__dirname, './common', 'uploads'), {
+    prefix: '/media',
+  });
 
   await app.listen(PORT);
 }

@@ -53,12 +53,21 @@ export class Cat extends Document {
     description: 'image',
     required: true,
   })
-  @Prop()
+  @Prop({
+    //default이미지를 설정
+    default:
+      'https://raw.githubusercontent.com/amamov/teaching-nestjs-a-to-z/main/images/1.jpeg',
+  })
   @IsString()
   imgUrl: string;
 
   //readOnlyData를 아래에서 만들었으므로 이를 여기에도 적어준다
-  readonly readOnlyData: { id: string; email: string; name: string };
+  readonly readOnlyData: {
+    id: string;
+    email: string;
+    name: string;
+    imgUrl: string;
+  };
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat);
@@ -69,5 +78,6 @@ CatSchema.virtual('readOnlyData').get(function (this: Cat) {
     id: this.id,
     email: this.email,
     name: this.name,
+    imgUrl: this.imgUrl,
   };
 });

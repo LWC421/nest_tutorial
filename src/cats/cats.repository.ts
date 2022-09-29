@@ -27,4 +27,19 @@ export class CatsRepository {
   async create(cat: CatRequestDto): Promise<Cat> {
     return await this.catModel.create(cat);
   }
+
+  async fildByIdAndUpdateImg(id: string, fileName: string) {
+    const cat = await this.catModel.findById(id);
+    cat.imgUrl = `http://localhost:8000/media/${fileName}`; //cat의 정보를 변경
+    const newCat = await cat.save(); //cat의 정보를 저장
+    console.log(newCat);
+
+    return newCat.readOnlyData;
+  }
+
+  //모든 데이터를 가져온다.
+  async findAll() {
+    //find안에 query문을 쓰지않으면 모든 데이터를 가져온다
+    return await this.catModel.find();
+  }
 }
